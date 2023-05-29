@@ -51,6 +51,7 @@ function init() {
   grids = [];
   invaderProjectiles = [];
   particles = [];
+  gridSpeedModifier = 1;
   keys = {
     a: {
       pressed: false,
