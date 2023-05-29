@@ -1,6 +1,10 @@
-# Modified Space Invaders Game
+# Space Invaders Game
+
+![Space Invaders](./img/readme1.png "Space Invaders Game")
 
 This is an adaptation of the renowned Space Invaders game. The game has been modified and refined to align more closely with my design preferences and desired game play experience. It includes several JavaScript files and an HTML file.
+
+![Game Play](./img/readme2.png "Space Invaders Game Play")
 
 ## Getting Started
 
