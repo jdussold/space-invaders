@@ -471,6 +471,28 @@ canvas.addEventListener("touchend", (event) => {
 canvas.addEventListener("touchmove", (event) => {
   if (!game.active || game.over) return;
   event.preventDefault();
+
+  const touchEndTime = Date.now();
+  const touchDuration = touchEndTime - touchStartTime;
+
+  // Check if the touch duration is less than 300ms for shooting
+  if (touchDuration < 300) {
+    return; // Don't move the player if it's a quick tap
+  }
+
+  // Handle touch movement
+  const { pageX } = event.touches[0];
+  const touchX = pageX - canvas.offsetLeft;
+  const canvasCenterX = canvas.width / 2;
+
+  // Move the player left or right based on touch position
+  if (touchX < canvasCenterX) {
+    keys.touchLeft.pressed = true;
+    keys.touchRight.pressed = false;
+  } else {
+    keys.touchLeft.pressed = false;
+    keys.touchRight.pressed = true;
+  }
 });
 
 canvas.addEventListener("touchcancel", (event) => {
