@@ -454,7 +454,7 @@ canvas.addEventListener("touchstart", (event) => {
       keys.touchRight.pressed = true;
     }
     touchTimer = null;
-  }, 300); // 300ms delay to distinguish between tap and long press
+  }, 200); // 200ms delay to distinguish between tap and long press
 
   // Shoot immediately on touch start
   handleTouchShoot();
