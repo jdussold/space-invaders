@@ -438,34 +438,43 @@ addEventListener("keyup", ({ key }) => {
 });
 
 // Touch event listeners
-let touchStartTime = 0;
+let touchTimer = null;
 
+// Touch event listeners
 canvas.addEventListener("touchstart", (event) => {
   if (!game.active || game.over) return;
   event.preventDefault();
   const { pageX } = event.touches[0];
-  touchStartTime = Date.now();
 
-  if (pageX < canvas.width / 2) {
-    keys.touchLeft.pressed = true;
-  } else {
-    keys.touchRight.pressed = true;
-  }
+  touchTimer = setTimeout(() => {
+    // On long press, move the player
+    if (pageX < canvas.width / 2) {
+      keys.touchLeft.pressed = true;
+    } else {
+      keys.touchRight.pressed = true;
+    }
+    touchTimer = null;
+  }, 300); // 300ms delay to distinguish between tap and long press
+
+  // Shoot immediately on touch start
+  handleTouchShoot();
 });
 
 canvas.addEventListener("touchend", (event) => {
   if (!game.active || game.over) return;
   event.preventDefault();
-  keys.touchLeft.pressed = false;
-  keys.touchRight.pressed = false;
 
-  const touchEndTime = Date.now();
-  const touchDuration = touchEndTime - touchStartTime;
-
-  // Check if the touch was quick (less than 300ms) for shooting
-  if (touchDuration < 300) {
-    handleTouchShoot();
+  // If touchTimer is still valid, it was a quick tap for shooting
+  if (touchTimer) {
+    clearTimeout(touchTimer);
+    touchTimer = null;
+  } else {
+    // Otherwise, it was a long press for moving
+    keys.touchLeft.pressed = false;
+    keys.touchRight.pressed = false;
   }
+
+  keys.touchShoot.pressed = false; // Reset the touchShoot property
 });
 
 canvas.addEventListener("touchmove", (event) => {
@@ -478,6 +487,7 @@ canvas.addEventListener("touchcancel", (event) => {
   event.preventDefault();
   keys.touchLeft.pressed = false;
   keys.touchRight.pressed = false;
+  keys.touchShoot.pressed = false; // Reset the touchShoot property
 });
 
 // Function to handle touch events and perform shooting action
@@ -499,7 +509,3 @@ function handleTouchShoot() {
     );
   }
 }
-
-// Add touch event listeners for shooting
-canvas.addEventListener("touchstart", handleTouchShoot);
-canvas.addEventListener("touchmove", handleTouchShoot);
