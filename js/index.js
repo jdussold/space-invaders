@@ -152,7 +152,7 @@ function endGame() {
     audio.backgroundMusic.stop();
     document.querySelector("#restartScreen").style.display = "flex";
     document.querySelector("#finalScore").innerHTML = score.toLocaleString();
-  }, 1000);
+  }, 0);
 
   // stops player particles from generating
   createParticles({
