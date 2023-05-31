@@ -438,10 +438,14 @@ addEventListener("keyup", ({ key }) => {
 });
 
 // Touch event listeners
+let touchStartTime = 0;
+
 canvas.addEventListener("touchstart", (event) => {
   if (!game.active || game.over) return;
   event.preventDefault();
   const { pageX } = event.touches[0];
+  touchStartTime = Date.now();
+
   if (pageX < canvas.width / 2) {
     keys.touchLeft.pressed = true;
   } else {
@@ -454,7 +458,14 @@ canvas.addEventListener("touchend", (event) => {
   event.preventDefault();
   keys.touchLeft.pressed = false;
   keys.touchRight.pressed = false;
-  keys.touchShoot.pressed = false; // Reset the touchShoot property
+
+  const touchEndTime = Date.now();
+  const touchDuration = touchEndTime - touchStartTime;
+
+  // Check if the touch was quick (less than 300ms) for shooting
+  if (touchDuration < 300) {
+    handleTouchShoot();
+  }
 });
 
 canvas.addEventListener("touchmove", (event) => {
@@ -467,7 +478,6 @@ canvas.addEventListener("touchcancel", (event) => {
   event.preventDefault();
   keys.touchLeft.pressed = false;
   keys.touchRight.pressed = false;
-  keys.touchShoot.pressed = false; // Reset the touchShoot property
 });
 
 // Function to handle touch events and perform shooting action
