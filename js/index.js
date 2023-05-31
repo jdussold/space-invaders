@@ -26,10 +26,13 @@ let keys = {
   space: {
     pressed: false,
   },
-  ArrowLeft: {
+  touchLeft: {
     pressed: false,
   },
-  ArrowRight: {
+  touchRight: {
+    pressed: false,
+  },
+  touchShoot: {
     pressed: false,
   },
 };
@@ -60,6 +63,15 @@ function init() {
       pressed: false,
     },
     space: {
+      pressed: false,
+    },
+    touchLeft: {
+      pressed: false,
+    },
+    touchRight: {
+      pressed: false,
+    },
+    touchShoot: {
       pressed: false,
     },
   };
@@ -333,11 +345,11 @@ function animate() {
   });
 
   // Handling player movements based on key presses
-  if (keys.a.pressed && player.position.x >= 0) {
+  if ((keys.a.pressed || keys.touchLeft.pressed) && player.position.x >= 0) {
     player.velocity.x = -5;
     player.rotation = -0.25;
   } else if (
-    keys.d.pressed &&
+    (keys.d.pressed || keys.touchRight.pressed) &&
     player.position.x + player.width <= canvas.width
   ) {
     player.velocity.x = 5;
@@ -423,4 +435,35 @@ addEventListener("keyup", ({ key }) => {
       keys.space.pressed = false;
       break;
   }
+});
+
+// Touch event listeners
+canvas.addEventListener("touchstart", (event) => {
+  if (!game.active || game.over) return;
+  event.preventDefault();
+  const { pageX } = event.touches[0];
+  if (pageX < canvas.width / 2) {
+    keys.touchLeft.pressed = true;
+  } else {
+    keys.touchRight.pressed = true;
+  }
+});
+
+canvas.addEventListener("touchend", (event) => {
+  if (!game.active || game.over) return;
+  event.preventDefault();
+  keys.touchLeft.pressed = false;
+  keys.touchRight.pressed = false;
+});
+
+canvas.addEventListener("touchmove", (event) => {
+  if (!game.active || game.over) return;
+  event.preventDefault();
+});
+
+canvas.addEventListener("touchcancel", (event) => {
+  if (!game.active || game.over) return;
+  event.preventDefault();
+  keys.touchLeft.pressed = false;
+  keys.touchRight.pressed = false;
 });
