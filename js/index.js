@@ -454,6 +454,7 @@ canvas.addEventListener("touchend", (event) => {
   event.preventDefault();
   keys.touchLeft.pressed = false;
   keys.touchRight.pressed = false;
+  keys.touchShoot.pressed = false; // Reset the touchShoot property
 });
 
 canvas.addEventListener("touchmove", (event) => {
@@ -466,4 +467,29 @@ canvas.addEventListener("touchcancel", (event) => {
   event.preventDefault();
   keys.touchLeft.pressed = false;
   keys.touchRight.pressed = false;
+  keys.touchShoot.pressed = false; // Reset the touchShoot property
 });
+
+// Function to handle touch events and perform shooting action
+function handleTouchShoot() {
+  if (!keys.touchShoot.pressed) {
+    keys.touchShoot.pressed = true;
+    audio.shoot.play();
+    projectiles.push(
+      new Projectile({
+        position: {
+          x: player.position.x + player.width / 2,
+          y: player.position.y,
+        },
+        velocity: {
+          x: 0,
+          y: -5,
+        },
+      })
+    );
+  }
+}
+
+// Add touch event listeners for shooting
+canvas.addEventListener("touchstart", handleTouchShoot);
+canvas.addEventListener("touchmove", handleTouchShoot);
