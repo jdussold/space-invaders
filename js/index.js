@@ -456,11 +456,7 @@ canvas.addEventListener("touchstart", (event) => {
   }
 
   // Set a timeout to handle shooting after 300ms
-  touchTimeout = setTimeout(() => {
-    if (Date.now() - touchStartTime <= 300) {
-      handleTouchShoot();
-    }
-  }, 300);
+  touchTimeout = setTimeout(handleTouchShoot, 300);
 });
 
 canvas.addEventListener("touchend", (event) => {
@@ -469,13 +465,43 @@ canvas.addEventListener("touchend", (event) => {
   keys.touchLeft.pressed = false;
   keys.touchRight.pressed = false;
 
-  clearTimeout(touchTimeout);
+  const touchEndTime = Date.now();
+  const touchDuration = touchEndTime - touchStartTime;
+
+  // Check if the touch was longer than 300ms for movement
+  if (touchDuration >= 300) {
+    clearTimeout(touchTimeout); // Cancel the shooting timeout
+    handleTouchMovement(event);
+  } else {
+    clearTimeout(touchTimeout); // Cancel the shooting timeout
+    handleTouchShoot();
+  }
 });
 
 canvas.addEventListener("touchmove", (event) => {
   if (!game.active || game.over) return;
   event.preventDefault();
 
+  const touchEndTime = Date.now();
+  const touchDuration = touchEndTime - touchStartTime;
+
+  // Check if the touch duration is longer than 300ms for movement
+  if (touchDuration >= 300) {
+    clearTimeout(touchTimeout); // Cancel the shooting timeout
+    handleTouchMovement(event);
+  }
+});
+
+canvas.addEventListener("touchcancel", (event) => {
+  if (!game.active || game.over) return;
+  event.preventDefault();
+  keys.touchLeft.pressed = false;
+  keys.touchRight.pressed = false;
+  clearTimeout(touchTimeout); // Cancel the shooting timeout
+});
+
+// Function to handle touch movement
+function handleTouchMovement(event) {
   const { pageX } = event.touches[0];
   const touchX = pageX - canvas.offsetLeft;
   const canvasCenterX = canvas.width / 2;
@@ -488,15 +514,7 @@ canvas.addEventListener("touchmove", (event) => {
     keys.touchLeft.pressed = false;
     keys.touchRight.pressed = true;
   }
-});
-
-canvas.addEventListener("touchcancel", (event) => {
-  if (!game.active || game.over) return;
-  event.preventDefault();
-  keys.touchLeft.pressed = false;
-  keys.touchRight.pressed = false;
-  clearTimeout(touchTimeout);
-});
+}
 
 // Function to handle touch events and perform shooting action
 function handleTouchShoot() {
